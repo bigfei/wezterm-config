@@ -27,6 +27,12 @@ local keys = {
    },
    { key = 'F11', mods = 'NONE',    action = act.ToggleFullScreen },
    { key = 'F12', mods = 'NONE',    action = act.ShowDebugOverlay },
+   { key = 'n',   mods = mod.SUPER .. '|SHIFT', action = act.EmitEvent('theme.next') },
+   { key = 'p',   mods = mod.SUPER .. '|SHIFT', action = act.EmitEvent('theme.prev') },
+   { key = 'r',   mods = mod.SUPER .. '|SHIFT', action = act.EmitEvent('theme.random') },
+   { key = 'd',   mods = mod.SUPER .. '|SHIFT', action = act.EmitEvent('theme.default') },
+   { key = 's',   mods = mod.SUPER .. '|SHIFT', action = act.EmitEvent('resurrect.save') },
+   { key = 'l',   mods = mod.SUPER .. '|SHIFT', action = act.EmitEvent('resurrect.restore') },
    { key = 'f',   mods = mod.SUPER, action = act.Search({ CaseInSensitiveString = '' }) },
    {
       key = 'u',

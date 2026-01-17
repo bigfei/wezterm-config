@@ -1,7 +1,4 @@
 local gpu_adapters = require('utils.gpu-adapter')
-local backdrops = require('utils.backdrops')
-local colors = require('colors.custom')
-
 return {
    max_fps = 120,
    front_end = 'WebGpu', ---@type 'WebGpu' | 'OpenGL' | 'Software'
@@ -19,10 +16,10 @@ return {
    cursor_blink_rate = 650,
 
    -- color scheme
-   colors = colors,
+   color_scheme = 'rose-pine-moon',
 
-   -- background: pass in `true` if you want wezterm to start with focus mode on (no bg images)
-   background = backdrops:initial_options(false),
+   window_background_opacity = 0.35,
+   kde_window_background_blur = true,
 
    -- scrollbar
    enable_scroll_bar = true,
