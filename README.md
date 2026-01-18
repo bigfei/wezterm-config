@@ -26,6 +26,16 @@
 
   > See: [key bindings](#background-images) for usage
 
+- [**Auto Theme Switching**](https://github.com/KevinSilvester/wezterm-config/blob/master/utils/theme.lua)
+
+  - Follows system light/dark appearance via `wezterm.gui.get_appearance()`
+  - Manual theme changes pause auto switching for the session
+
+- [**Right Status: Network Speed**](https://github.com/KevinSilvester/wezterm-config/blob/master/events/right-status.lua)
+
+  - Shows up/down throughput next to the clock
+  - Linux-only (reads `/proc/net/dev`)
+
 - [**GPU Adapter Selector**](https://github.com/KevinSilvester/wezterm-config/blob/master/utils/gpu_adapter.lua)
 
   > :bulb: Only works if the [`front_end`](https://github.com/KevinSilvester/wezterm-config/blob/master/config/appearance.lua#L8) option is set to `WebGpu`.
@@ -208,6 +218,8 @@
 
   - [./config/domains.lua](./config/domains.lua) for custom SSH/WSL domains
   - [./config/launch.lua](./config/launch.lua) for preferred shells and its paths
+  - [./utils/theme.lua](./utils/theme.lua) for light/dark theme names
+  - On Linux, `./config/launch.lua` runs `fastfetch` before zsh; remove if you don't want it
 
 ---
 
@@ -238,6 +250,10 @@ Most of the key bindings revolve around a <kbd>SUPER</kbd> and <kbd>SUPER_REV</k
 | <kbd>F5</kbd>                     | `ShowLauncher` <sub>(workspaces only)</sub> |
 | <kbd>F11</kbd>                    | `ToggleFullScreen`                          |
 | <kbd>F12</kbd>                    | `ShowDebugOverlay`                          |
+| <kbd>SUPER</kbd>+<kbd>SHIFT</kbd>+<kbd>n</kbd> | Next theme                      |
+| <kbd>SUPER</kbd>+<kbd>SHIFT</kbd>+<kbd>p</kbd> | Previous theme                  |
+| <kbd>SUPER</kbd>+<kbd>SHIFT</kbd>+<kbd>r</kbd> | Random theme                    |
+| <kbd>SUPER</kbd>+<kbd>SHIFT</kbd>+<kbd>d</kbd> | Default theme                   |
 | <kbd>SUPER</kbd>+<kbd>f</kbd>     | Search Text                                 |
 | <kbd>SUPER_REV</kbd>+<kbd>u</kbd> | Open URL                                    |
 
