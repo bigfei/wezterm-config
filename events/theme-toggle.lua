@@ -1,4 +1,5 @@
 local wezterm = require('wezterm')
+local theme = require('utils.theme')
 
 local M = {}
 
@@ -6,6 +7,12 @@ local state = {
    themes = {},
    default_theme = nil,
    toast = true,
+   auto = false,
+   auto_toast = false,
+   auto_paused = false,
+   auto_pause_on_manual = true,
+   light_theme = nil,
+   dark_theme = nil,
 }
 
 local function build_theme_list()
@@ -34,7 +41,11 @@ local function apply_theme(window, theme_name, label)
    overrides.color_scheme = theme_name
    window:set_config_overrides(overrides)
 
-   if state.toast then
+   if state.auto and state.auto_pause_on_manual and label then
+      state.auto_paused = true
+   end
+
+   if state.toast and label then
       window:toast_notification('WezTerm Theme', label .. ': ' .. theme_name, nil, 4000)
    end
 end
@@ -42,6 +53,29 @@ end
 local function current_theme(window)
    local overrides = window:get_config_overrides() or {}
    return overrides.color_scheme or window:effective_config().color_scheme
+end
+
+local function scheme_for_appearance(appearance)
+   if theme.is_dark(appearance) then
+      return state.dark_theme
+   end
+   return state.light_theme
+end
+
+local function apply_auto_theme(window)
+   if not state.auto or state.auto_paused then
+      return
+   end
+
+   local appearance = theme.get_appearance()
+   local desired = scheme_for_appearance(appearance)
+   if not desired or desired == '' then
+      return
+   end
+
+   if current_theme(window) ~= desired then
+      apply_theme(window, desired, state.auto_toast and 'Auto theme' or nil)
+   end
 end
 
 local function ensure_default_theme(window)
@@ -95,6 +129,11 @@ M.setup = function(opts)
    state.toast = opts.toast ~= false
    state.themes = opts.themes or build_theme_list()
    state.default_theme = opts.default_theme
+   state.auto = opts.auto == true
+   state.auto_toast = opts.auto_toast == true
+   state.auto_pause_on_manual = opts.auto_pause_on_manual ~= false
+   state.light_theme = opts.light_theme or theme.light
+   state.dark_theme = opts.dark_theme or theme.dark
 
    if #state.themes == 0 then
       wezterm.log_warn('theme-toggle: no themes available')
@@ -116,6 +155,16 @@ M.setup = function(opts)
    wezterm.on('theme.default', function(window, _pane)
       default_theme(window)
    end)
+
+   if state.auto then
+      wezterm.on('window-config-reloaded', function(window, _pane)
+         apply_auto_theme(window)
+      end)
+
+      wezterm.on('update-right-status', function(window, _pane)
+         apply_auto_theme(window)
+      end)
+   end
 end
 
 return M

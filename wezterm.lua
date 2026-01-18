@@ -5,7 +5,10 @@ require('events.left-status').setup()
 require('events.right-status').setup({ date_format = '%a %H:%M:%S' })
 require('events.tab-title').setup({ hide_active_tab_unseen = false, unseen_icon = 'numbered_box' })
 require('events.new-tab-button').setup()
-require('events.theme-toggle').setup({ default_theme = appearance.color_scheme })
+require('events.theme-toggle').setup({
+   default_theme = appearance.color_scheme,
+   auto = true,
+})
 require('events.resurrect').setup()
 require('events.gui-startup').setup()
 

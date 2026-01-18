@@ -1,4 +1,7 @@
+local theme = require('utils.theme')
 local gpu_adapters = require('utils.gpu-adapter')
+
+local color_scheme = theme.scheme_for_appearance(theme.get_appearance())
 return {
    max_fps = 120,
    front_end = 'WebGpu', ---@type 'WebGpu' | 'OpenGL' | 'Software'
@@ -16,7 +19,7 @@ return {
    cursor_blink_rate = 650,
 
    -- color scheme
-   color_scheme = 'rose-pine-moon',
+   color_scheme = color_scheme,
 
    window_background_opacity = 0.35,
    kde_window_background_blur = true,
@@ -26,9 +29,9 @@ return {
 
    -- tab bar
    enable_tab_bar = true,
-   hide_tab_bar_if_only_one_tab = false,
+   hide_tab_bar_if_only_one_tab = true,
    use_fancy_tab_bar = false,
-   tab_max_width = 25,
+   tab_max_width = 1000,
    show_tab_index_in_tab_bar = false,
    switch_to_last_active_tab_when_closing_tab = true,
 

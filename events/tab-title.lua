@@ -81,6 +81,9 @@ local TITLE_INSET = {
    ICON = 8,
 }
 
+local RIGHT_STATUS_FALLBACK = 28
+local RIGHT_STATUS_PADDING = 2
+
 local RENDER_VARIANTS = {
    { 'scircle_left', 'title', 'padding', 'scircle_right' },
    { 'scircle_left', 'title', 'unseen_output', 'padding', 'scircle_right' },
@@ -352,15 +355,26 @@ M.setup = function(opts)
    end)
 
    -- BUILTIN EVENT
-   wezterm.on('format-tab-title', function(tab, _tabs, _panes, _config, hover, max_width)
+   wezterm.on('format-tab-title', function(tab, tabs, _panes, _config, hover, max_width)
+      local effective_max_width = max_width
+      local reserve = RIGHT_STATUS_FALLBACK
+      if wezterm.GLOBAL and type(wezterm.GLOBAL.right_status_cols) == 'number' then
+         reserve = wezterm.GLOBAL.right_status_cols + RIGHT_STATUS_PADDING
+      end
+
+      if #tabs > 0 and reserve > 0 then
+         local per_tab_reserve = math.ceil(reserve / #tabs)
+         effective_max_width = math.max(8, max_width - per_tab_reserve)
+      end
+
       if not tab_list[tab.tab_id] then
          tab_list[tab.tab_id] = Tab:new()
-         tab_list[tab.tab_id]:set_info(valid_opts, tab, max_width)
+         tab_list[tab.tab_id]:set_info(valid_opts, tab, effective_max_width)
          tab_list[tab.tab_id]:create_cells()
          return tab_list[tab.tab_id]:render()
       end
 
-      tab_list[tab.tab_id]:set_info(valid_opts, tab, max_width)
+      tab_list[tab.tab_id]:set_info(valid_opts, tab, effective_max_width)
       tab_list[tab.tab_id]:update_cells(valid_opts, tab.is_active, hover)
       return tab_list[tab.tab_id]:render()
    end)
