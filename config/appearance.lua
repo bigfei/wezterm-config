@@ -21,7 +21,7 @@ return {
    -- color scheme
    color_scheme = color_scheme,
 
-   window_background_opacity = 0.35,
+   window_background_opacity = 0.6,
    kde_window_background_blur = true,
 
    -- scrollbar

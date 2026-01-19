@@ -13,6 +13,7 @@ local state = {
    auto_pause_on_manual = true,
    light_theme = nil,
    dark_theme = nil,
+   debug_dump_path = '/tmp/wezterm-builtin-pairs.txt',
 }
 
 local function build_theme_list()
@@ -63,8 +64,7 @@ local function random_from(list)
    return list[math.random(1, #list)]
 end
 
-local function toggle_light_dark(window)
-   local current = current_theme(window)
+local function resolve_light_dark_target(current)
    local target = nil
 
    if current == state.light_theme then
@@ -108,8 +108,57 @@ local function toggle_light_dark(window)
    end
 
    if target and target ~= '' then
+      return target
+   end
+   return nil
+end
+
+local function toggle_light_dark(window)
+   local current = current_theme(window)
+   local target = resolve_light_dark_target(current)
+   if target then
       apply_theme(window, target, 'Toggle light/dark')
    end
+end
+
+local function write_builtin_pairs(path)
+   if not path or path == '' then
+      wezterm.log_warn('theme-toggle: debug_dump_path is empty')
+      return false
+   end
+
+   local pair_map = theme.build_builtin_pairs()
+   local keys = {}
+
+   for key, _ in pairs(pair_map) do
+      table.insert(keys, key)
+   end
+   table.sort(keys)
+
+   local file, err = io.open(path, 'w')
+   if not file then
+      wezterm.log_error('theme-toggle: unable to write builtin pairs: ' .. tostring(err))
+      return false
+   end
+
+   for _, key in ipairs(keys) do
+      local entry = pair_map[key] or {}
+      file:write(
+         key,
+         '\t',
+         tostring(entry.light),
+         '\t',
+         tostring(entry.dark),
+         '\t',
+         tostring(entry.light_l),
+         '\t',
+         tostring(entry.dark_l),
+         '\n'
+      )
+   end
+
+   file:close()
+   return true
 end
 
 local function scheme_for_appearance(appearance)
@@ -181,6 +230,8 @@ local function default_theme(window)
    apply_theme(window, state.themes[default_idx], 'Default theme')
 end
 
+M.resolve_light_dark_target = resolve_light_dark_target
+
 M.setup = function(opts)
    opts = opts or {}
    state.toast = opts.toast ~= false
@@ -191,6 +242,7 @@ M.setup = function(opts)
    state.auto_pause_on_manual = opts.auto_pause_on_manual ~= false
    state.light_theme = opts.light_theme or theme.light
    state.dark_theme = opts.dark_theme or theme.dark
+   state.debug_dump_path = opts.debug_dump_path or state.debug_dump_path
 
    if #state.themes == 0 then
       wezterm.log_warn('theme-toggle: no themes available')
@@ -215,6 +267,17 @@ M.setup = function(opts)
 
    wezterm.on('theme.toggle_light_dark', function(window, _pane)
       toggle_light_dark(window)
+   end)
+
+   wezterm.on('theme.debug.dump_pairs', function(window, _pane)
+      if write_builtin_pairs(state.debug_dump_path) and state.toast then
+         window:toast_notification(
+            'WezTerm Theme',
+            'Wrote builtin pairs: ' .. state.debug_dump_path,
+            nil,
+            4000
+         )
+      end
    end)
 
    if state.auto then

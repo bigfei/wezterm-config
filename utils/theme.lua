@@ -86,7 +86,7 @@ function M.build_builtin_pairs()
    end
 
    local schemes = M.builtin_schemes()
-   local pairs = {}
+   local pair_map = {}
    local names = {}
 
    for name, _ in pairs(schemes) do
@@ -99,7 +99,7 @@ function M.build_builtin_pairs()
       if variant then
          local key = M.base_key(name)
          if key ~= '' then
-            local entry = pairs[key]
+            local entry = pair_map[key]
                or { light = nil, dark = nil, light_l = nil, dark_l = nil }
 
             if variant == 'light' then
@@ -114,13 +114,13 @@ function M.build_builtin_pairs()
                end
             end
 
-            pairs[key] = entry
+            pair_map[key] = entry
          end
       end
    end
 
-   M._builtin_pairs = pairs
-   return pairs
+   M._builtin_pairs = pair_map
+   return pair_map
 end
 
 function M.builtin_pair_for(name)
