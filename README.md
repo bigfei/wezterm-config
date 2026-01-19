@@ -254,6 +254,7 @@ Most of the key bindings revolve around a <kbd>SUPER</kbd> and <kbd>SUPER_REV</k
 | <kbd>SUPER</kbd>+<kbd>SHIFT</kbd>+<kbd>p</kbd> | Previous theme                  |
 | <kbd>SUPER</kbd>+<kbd>SHIFT</kbd>+<kbd>r</kbd> | Random theme                    |
 | <kbd>SUPER</kbd>+<kbd>SHIFT</kbd>+<kbd>d</kbd> | Default theme                   |
+| <kbd>SUPER</kbd>+<kbd>SHIFT</kbd>+<kbd>t</kbd> | Toggle light/dark               |
 | <kbd>SUPER</kbd>+<kbd>f</kbd>     | Search Text                                 |
 | <kbd>SUPER_REV</kbd>+<kbd>u</kbd> | Open URL                                    |
 

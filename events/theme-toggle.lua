@@ -55,6 +55,63 @@ local function current_theme(window)
    return overrides.color_scheme or window:effective_config().color_scheme
 end
 
+local function random_from(list)
+   if not list or #list == 0 then
+      return nil
+   end
+   math.randomseed(os.time())
+   return list[math.random(1, #list)]
+end
+
+local function toggle_light_dark(window)
+   local current = current_theme(window)
+   local target = nil
+
+   if current == state.light_theme then
+      target = state.dark_theme
+   elseif current == state.dark_theme then
+      target = state.light_theme
+   else
+      local pair = theme.builtin_pair_for(current)
+      if pair then
+         if pair.light == current and pair.dark then
+            target = pair.dark
+         elseif pair.dark == current and pair.light then
+            target = pair.light
+         else
+            local variant = theme.scheme_variant(current)
+            if variant == 'dark' and pair.light then
+               target = pair.light
+            elseif variant == 'light' and pair.dark then
+               target = pair.dark
+            elseif pair.dark and pair.light then
+               target = pair.dark
+            end
+         end
+      end
+   end
+
+   if not target or target == '' then
+      local variant = theme.scheme_variant(current)
+      if variant == 'dark' then
+         target = random_from(theme.light_schemes()) or state.light_theme
+      elseif variant == 'light' then
+         target = random_from(theme.dark_schemes()) or state.dark_theme
+      else
+         local appearance = theme.get_appearance()
+         if theme.is_dark(appearance) then
+            target = random_from(theme.light_schemes()) or state.light_theme
+         else
+            target = random_from(theme.dark_schemes()) or state.dark_theme
+         end
+      end
+   end
+
+   if target and target ~= '' then
+      apply_theme(window, target, 'Toggle light/dark')
+   end
+end
+
 local function scheme_for_appearance(appearance)
    if theme.is_dark(appearance) then
       return state.dark_theme
@@ -154,6 +211,10 @@ M.setup = function(opts)
 
    wezterm.on('theme.default', function(window, _pane)
       default_theme(window)
+   end)
+
+   wezterm.on('theme.toggle_light_dark', function(window, _pane)
+      toggle_light_dark(window)
    end)
 
    if state.auto then
