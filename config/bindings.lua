@@ -36,6 +36,7 @@ local keys = {
    { key = 's',   mods = mod.SUPER .. '|SHIFT', action = act.EmitEvent('resurrect.save') },
    { key = 'l',   mods = mod.SUPER .. '|SHIFT', action = act.EmitEvent('resurrect.restore') },
    { key = 'f',   mods = mod.SUPER, action = act.Search({ CaseInSensitiveString = '' }) },
+   { key = 'l',   mods = 'CTRL|SHIFT', action = act.ClearScrollback 'ScrollbackAndViewport' },
    {
       key = 'u',
       mods = mod.SUPER_REV,

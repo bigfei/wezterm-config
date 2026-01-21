@@ -13,7 +13,7 @@ if platform.is_mac then
    window_background_opacity = 0.8
 elseif platform.is_linux then
    kde_window_background_blur = true
-   window_background_opacity = 0.35
+   window_background_opacity = 0.8
 elseif platform.is_win then
    win32_system_backdrop = 'Acrylic'
    window_background_opacity = 0.6
