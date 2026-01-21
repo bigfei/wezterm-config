@@ -1,7 +1,23 @@
 local theme = require('utils.theme')
 local gpu_adapters = require('utils.gpu-adapter')
+local platform = require('utils.platform')
 
 local color_scheme = theme.scheme_for_appearance(theme.get_appearance())
+local macos_window_background_blur
+local kde_window_background_blur
+local win32_system_backdrop
+local window_background_opacity
+
+if platform.is_mac then
+   macos_window_background_blur = 30
+   window_background_opacity = 0.8
+elseif platform.is_linux then
+   kde_window_background_blur = true
+   window_background_opacity = 0.35
+elseif platform.is_win then
+   win32_system_backdrop = 'Acrylic'
+   window_background_opacity = 0.6
+end
 return {
    max_fps = 120,
    front_end = 'WebGpu', ---@type 'WebGpu' | 'OpenGL' | 'Software'
@@ -21,8 +37,10 @@ return {
    -- color scheme
    color_scheme = color_scheme,
 
-   window_background_opacity = 0.6,
-   kde_window_background_blur = true,
+   window_background_opacity = window_background_opacity,
+   macos_window_background_blur = macos_window_background_blur,
+   kde_window_background_blur = kde_window_background_blur,
+   win32_system_backdrop = win32_system_backdrop,
 
    -- scrollbar
    enable_scroll_bar = true,

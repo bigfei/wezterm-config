@@ -29,6 +29,7 @@ local ICON_NET_DOWN = nf.md_arrow_down
 local ICON_NET_UP = nf.md_arrow_up
 
 local IS_LINUX = wezterm.target_triple:find('linux') ~= nil
+local IS_MAC = wezterm.target_triple:find('darwin') ~= nil
 
 ---@type string[]
 local discharging_icons = {
@@ -109,7 +110,50 @@ end
 ---@return number|nil, number|nil
 local function read_net_bytes()
    if not IS_LINUX then
-      return nil, nil
+      if not IS_MAC then
+         return nil, nil
+      end
+
+      local handle = io.popen('netstat -ib')
+      if not handle then
+         return nil, nil
+      end
+
+      local rx, tx = 0, 0
+      local seen = {}
+
+      for line in handle:lines() do
+         repeat
+            if line:match('^Name%s+Mtu') then
+               break
+            end
+
+            local fields = {}
+            for field in line:gmatch('%S+') do
+               fields[#fields + 1] = field
+            end
+
+            local iface = fields[1]
+            if not iface or iface == 'lo0' or seen[iface] then
+               break
+            end
+
+            if #fields < 7 then
+               break
+            end
+
+            local stats_start = #fields - 6
+            local ibytes = tonumber(fields[stats_start + 2]) or 0
+            local obytes = tonumber(fields[stats_start + 5]) or 0
+
+            rx = rx + ibytes
+            tx = tx + obytes
+            seen[iface] = true
+         until true
+      end
+
+      handle:close()
+      return rx, tx
    end
 
    local f = io.open('/proc/net/dev', 'r')
