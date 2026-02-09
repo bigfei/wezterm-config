@@ -28,6 +28,14 @@ local function build_theme_list()
    return themes
 end
 
+local function theme_choices()
+   local choices = {}
+   for _, name in ipairs(state.themes) do
+      table.insert(choices, { id = name, label = name })
+   end
+   return choices
+end
+
 local function find_theme_index(theme_name)
    for idx, name in ipairs(state.themes) do
       if name == theme_name then
@@ -230,6 +238,24 @@ local function default_theme(window)
    apply_theme(window, state.themes[default_idx], 'Default theme')
 end
 
+local function select_theme(window, pane)
+   window:perform_action(
+      wezterm.action.InputSelector({
+         title = 'InputSelector: Select Theme',
+         choices = theme_choices(),
+         fuzzy = true,
+         fuzzy_description = 'Select Theme: ',
+         action = wezterm.action_callback(function(win, _pane, id, _label)
+            if not id or id == '' then
+               return
+            end
+            apply_theme(win, id, 'Select theme')
+         end),
+      }),
+      pane
+   )
+end
+
 M.resolve_light_dark_target = resolve_light_dark_target
 
 M.setup = function(opts)
@@ -263,6 +289,10 @@ M.setup = function(opts)
 
    wezterm.on('theme.default', function(window, _pane)
       default_theme(window)
+   end)
+
+   wezterm.on('theme.select', function(window, pane)
+      select_theme(window, pane)
    end)
 
    wezterm.on('theme.toggle_light_dark', function(window, _pane)

@@ -32,6 +32,7 @@ local keys = {
    { key = 'r',   mods = mod.SUPER .. '|SHIFT', action = act.EmitEvent('theme.random') },
    { key = 'd',   mods = mod.SUPER .. '|SHIFT', action = act.EmitEvent('theme.default') },
    { key = 't',   mods = mod.SUPER .. '|SHIFT', action = act.EmitEvent('theme.toggle_light_dark') },
+   { key = 'f',   mods = mod.SUPER .. '|SHIFT', action = act.EmitEvent('theme.select') },
    -- { key = 'b',   mods = mod.SUPER .. '|SHIFT', action = act.EmitEvent('theme.debug.dump_pairs') },
    { key = 's',   mods = mod.SUPER .. '|SHIFT', action = act.EmitEvent('resurrect.save') },
    { key = 'l',   mods = mod.SUPER .. '|SHIFT', action = act.EmitEvent('resurrect.restore') },
